@@ -123,3 +123,4 @@ echo "${emy}[$u@$h\$(__git_ps1 ' <${emy}%s${none}>')${uc}${emy}]\n${p}${none} "
 export PS1=$(__mikespook_ps1)
 
 source /opt/rh/devtoolset-8/enable
+source /home/kyan/.bazel/bin/bazel-complete.bash
