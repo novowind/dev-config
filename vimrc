@@ -171,25 +171,14 @@ set t_Co=256
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('~/.vim/plugged')
 
-Plug 'universal-ctags/ctags'
+" tarbar
+Plug 'majutsushi/tagbar'
+nmap <F8> :TagbarToggle<CR>
+" 启动 时自动focus
+let g:tagbar_autofocus = 1
 
-Plug 'ludovicchabant/vim-gutentags'                                                                                                                                                          
-" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
-" 所生成的数据文件的名称
-let g:gutentags_ctags_tagfile = '.tags'
-" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
-let s:vim_tags = expand('~/.cache/tags')
-let g:gutentags_cache_dir = s:vim_tags
-" 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-" 检测 ~/.cache/tags 不存在就新建
-if !isdirectory(s:vim_tags)
-   silent! call mkdir(s:vim_tags, 'p')
-endif
 
+" LeadeerF
 Plug 'Yggdroot/LeaderF', { 'do': './install.sh' }
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<c-n>'
@@ -207,15 +196,20 @@ let g:Lf_HideHelp = 1
 let g:Lf_StlColorscheme = 'powerline'
 let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
+
 Plug 'vim-scripts/google.vim'
 Plug 'vim-scripts/a.vim'
+
 
 Plug 'octol/vim-cpp-enhanced-highlight'
 let c_no_curly_error = 1
 
+
 " - 号直接显示当前目录文件， 回车键 进入当前目录
 Plug 'justinmk/vim-dirvish'
 
+
+" nerdtree
 Plug 'scrooloose/nerdtree'
 " 使用 NERDTree 插件查看工程文件。设置快捷键，速记：file list
 nmap fl :NERDTreeToggle<cr>
@@ -232,8 +226,66 @@ let NERDTreeAutoDeleteBuffer=1
 let NERDTreeChDirMode=1
 let NERDTreeDirArrows=1
 
+
+" ctags && gutentags && gtags
+Plug 'universal-ctags/ctags'
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/gutentags_plus'
+
+" change focus to quickfix window after search (optional).
+let g:gutentags_plus_switch = 1
+" let g:gutentags_define_advanced_commands = 1
+
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.hg', '.project']
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+	let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+    let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+let g:gutentags_auto_add_gtags_cscope = 0
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+ailmnzS', '--extra=+q', '--tag-relative=yes']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+d+e+f+g+h+l+m+p+s+t+u+v+x+z+c+n+A+N+U+Z']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+d+e+g+h+l+m+s+t+u+v+z+f+p+x']
+let g:gutentags_ctags_extra_args += ['--links=yes']
+let g:gutentags_ctags_extra_args += ['--languages=c,c++']
+let g:gutentags_ctags_extra_args += ['--exclude=*/build_tools/*']
+let g:gutentags_ctags_extra_args += ['--exclude=*/pub/*']
+let g:gutentags_ctags_extra_args += ['--exclude=*/test/*']
+let g:gutentags_ctags_extra_args += ['--exclude=*/third_party/*']
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+
+" cscope
+Plug 'aceofall/gtags.vim'
+Plug 'joereynolds/gtags-scope'
+set cscopetag                  " 使用 cscope 作为 tags 命令
+set cscopeprg='gtags-cscope'   " 使用 gtags-cscope 代替 cscope
+let GtagsCscope_Auto_Load = 1
+let CtagsCscope_Auto_Map = 1
+let GtagsCscope_Quiet = 1
+
+
+" YCM
 Plug 'Valloric/YouCompleteMe', { 'do': 'YCM_CORES=1 python3 ./install.py --clang-completer' }
-let g:ycm_global_ycm_extra_conf='~/.vim/plugged/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py'
+let g:ycm_server_python_interpreter = '/usr/bin/python3'
+let g:ycm_global_ycm_extra_conf = '/root/.vim/.ycm_extra_conf.py'
 let g:ycm_add_preview_to_completeopt = 0 " 开启实时错误或者warning的检测
 let g:ycm_show_diagnostics_ui=0
 let g:ycm_server_log_level = 'info'
@@ -261,8 +313,9 @@ let g:ycm_error_symbol = '✗'  "set error or warning signs
 let g:ycm_warning_symbol = '⚠'
 
 " 只能是 #include 或已打开的文件
-nnoremap <leader>jd :YcmCompleter GoToDeclaration<CR>
-nnoremap <leader>je :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 " 修改补全列表配色
 highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
@@ -289,5 +342,6 @@ let g:ycm_filetype_blacklist = {
         \ 'pandoc' : 1,
         \ 'infolog' : 1,
         \}
+
 
 call plug#end()
