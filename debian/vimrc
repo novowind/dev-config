@@ -236,5 +236,6 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
 Plug 'google/vim-maktaba'
 Plug 'bazelbuild/vim-bazel'
+Plug 'bazelbuild/vim-ft-bzl'
 
 call plug#end()
