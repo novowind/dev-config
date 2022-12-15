@@ -164,6 +164,10 @@ colorscheme desert
 " 指定配色方案是256色
 set t_Co=256
 
+hi Search ctermbg=red
+hi Search ctermfg=white
+
+
 let mapleader=";"
 
 call plug#begin('~/.vim/plugged')
